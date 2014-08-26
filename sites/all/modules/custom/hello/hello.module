@@ -6,3 +6,48 @@
  * and open the template in the editor.
  */
 
+//these functions must be named with the short name your module's name
+//implement the hook
+
+function hello_block_info() {
+  $blocks = array();
+  
+  $blocks['hello_world'] = array(
+    'info' => t('Hello World Block'),
+  );
+  
+  $blocks['hello_user'] = array(
+    'info' => t('Hello User Block'),
+  );
+  
+  return $blocks;
+}
+
+function hello_block_view($delta = '') {
+  $block = array();
+  
+  switch($delta) {
+    case 'hello_world':
+      $block['subject'] = t('Hello World!!!');
+      $block['content'] = t('This is the Hello World Block.');
+      break;
+    case 'hello_user':
+      $block['subject'] = t('Hello World');
+      $hour = date('G');
+      $greeting = '';
+      if ($hour < 12) {
+        $greeting = 'Good Morning, @name!!';
+      } 
+      elseif ($hour < 18) {
+        $greeting = 'Good Afternoon, @name!!';
+      } else {
+        $greeting = 'Good Evening, @name!!';
+      }
+      
+      $block['content'] = t($greeting, array('@name' => $GLOBALS['user']->name));
+      //todo: debug this hour thing!
+      $block['content'] .= $hour;
+      break;
+  }
+  return $block;
+}
