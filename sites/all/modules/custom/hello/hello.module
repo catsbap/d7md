@@ -20,6 +20,10 @@ function hello_block_info() {
     'info' => t('Hello User Block'),
   );
   
+  $blocks['user_info'] = array(
+    'info' => t('User Info Block'),
+  );
+  
   return $blocks;
 }
 
@@ -31,6 +35,7 @@ function hello_block_view($delta = '') {
       $block['subject'] = t('Hello World!!!');
       $block['content'] = t('This is the Hello World Block.');
       break;
+    
     case 'hello_user':
       $block['subject'] = t('Hello World');
       $hour = date('G');
@@ -47,6 +52,32 @@ function hello_block_view($delta = '') {
       $block['content'] = t($greeting, array('@name' => $GLOBALS['user']->name));
       //todo: debug this hour thing!
       $block['content'] .= $hour;
+      break;
+      
+    case 'user_info':
+      
+      //dpm($_GET);
+      //dpm(arg(0));
+      //dpm(arg(1));
+      if (arg(0) == 'user' && is_numeric(arg(1))) {
+        //dpm($GLOBALS['user']);
+        $account = user_load(arg(1));
+        if (module_exists('devel')) {
+          dpm($account);
+        }
+        if(!empty($account)) {
+          $block['subject'] = t('User Info');
+          $output = '';
+          $output .= '<div><label>' . t('Name') . '</label>' . $account->name . '</div>';
+          $output .= '<div><label>' . t('Email') . '</label>' . $account->mail . '</div>';
+          $output .= '<div><label>' . t('Created') . '</label>' . format_date($account->created) . '</div>';
+          $access = ($account->access == 0) ? t('Never') : format_date($account->access);
+          $output .= '<div><label>' . t('Last Access') . '</label>' . $access . '</div>';
+
+          $block['content'] = $output;
+        }
+      }
+      
       break;
   }
   return $block;
