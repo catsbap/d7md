@@ -6,6 +6,7 @@ function hello_menu_menu() {
   $items['hello'] = array(
     //this automagically goes through the t function
     'title' => 'Hello World',
+    'description' => 'This is where we say hello!',
     'page callback' =>'hello_menu_simple_hello',
     'access arguments' => array('access content'),
     'menu_name' => 'main-menu',
@@ -25,8 +26,29 @@ function hello_menu_menu() {
     //this causes problems here because it is a submenu,
     //it uses the name from the parent tab and its title
     //is used in the tabs, not the menu name.
-    //'menu_name' => 'navigation',
+    //'menu_name' => 'navigation';
     'type' => MENU_LOCAL_TASK,
+  );
+  
+  $items['hello/variables/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+    
+  $items['hello/variables/create'] = array(
+    'title' => 'Create Variable',
+    'page callback' => 'hello_menu_create_variable',
+    'access arguments' => array('access content'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  
+    $items['hello/variables/delete'] = array(
+    'title' => 'Delete Variable',
+    'page callback' => 'hello_menu_delete_variable',
+    'access arguments' => array('access content'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
   );
   
   $items['hello/variables/%'] = array(
@@ -35,18 +57,15 @@ function hello_menu_menu() {
     'page callback' => 'hello_menu_show_variable',
     'page arguments' => array(2),
     'access arguments' => array('access content'),
-    'menu_name' => 'navigation',
-  );
-  
-  $items['hello/variables/create'] = array(
-    'title' => 'Create Variable',
-    'page callback' => 'hello_menu_create_variable',
-    'access arguments' => array('access content'),
-    'type' => MENU_LOCAL_ACTION,
+    'type' => MENU_CALLBACK,
   );
   
   return $items;
 }
+function hello_menu_delete_variable() {
+  return t('This is where we delete variables.');
+}
+
 function hello_menu_create_variable() {
   return t('This is where we create variables.');
 }
