@@ -38,6 +38,8 @@ function hello_block_view($delta = '') {
     
     case 'hello_user':
       $block['subject'] = t('Hello World');
+      //I don't know why this isn't getting picked up from php.ini, urg.
+      date_default_timezone_set('America/New_York');
       $hour = date('G');
       $greeting = '';
       if ($hour < 12) {
@@ -48,10 +50,15 @@ function hello_block_view($delta = '') {
       } else {
         $greeting = 'Good Evening, @name!!';
       }
-      
-      $block['content'] = t($greeting, array('@name' => $GLOBALS['user']->name));
+      if (isset($GLOBALS['user']->name)) {
+        $user_name = $GLOBALS['user']->name;
+      } else {
+        $user_name = "User";
+      }
+      $block['content'] = t($greeting, array('@name' => $user_name));
       //todo: debug this hour thing!
-      $block['content'] .= $hour;
+      //$block['content'] .= $hour;
+      //$block['content'] .= date_default_timezone_get();
       break;
       
     case 'user_info':

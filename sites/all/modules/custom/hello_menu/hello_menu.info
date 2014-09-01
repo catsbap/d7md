@@ -2,4 +2,4 @@ name = Hello Menu Router
 description = Hello World menu router examples for DrupalTutor Module Development class
 core = 7.x
 package = DrupalTutor
-version = 7.x.0-1
+version = 7.x-0.1

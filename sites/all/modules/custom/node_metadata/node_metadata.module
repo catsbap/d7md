@@ -1,0 +1,40 @@
+<?php
+
+function node_metadata_menu() {
+  $items = array();
+  
+//nodes need to be logically nested, so this one is under node/%node/metadata
+  //because that is the URL we will use for the menu item.
+  $items['node/%node/metadata'] = array(
+    'title' => 'Metadata',
+    'page callback' => 'node_metadata_page',
+    //this passes the argument from the URL to the callback function.
+    'page arguments' => array(1),
+    //'access arguments' => array('access content'),
+    //create your own permission level
+    //view node metadata is the machine name
+    'access arguments' => array('view node metadata'),
+    'file' => 'node_metadata.pages.inc',
+    'file path' => drupal_get_path('module', 'node_metadata') . '/includes',
+    //define the item as a tab item. There is already a default here.
+    'type' => MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+//implement hook_permission so we can set up our own
+//permissions.
+function node_metadata_permission() {
+  return array(
+    'view node metadata' => array(
+      'title' => t('View metadata about nodes'),
+      'description' => t('See important details about node objects.'),
+    ),
+  );
+}
+//you can also create your own load functions!
+//function joe_load($nid) {
+  //dsm("You found me!");
+  //return node_load($nid);
+//}
+
+
