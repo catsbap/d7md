@@ -8,9 +8,6 @@
 function node_limit_menu () {
   //date_default_timezone_set('America/New_York');
   
-  //don't display the menu if the user has the superadmin right
-
-  //if (user_access('always edit node metadata' 
   $items = array();
   
   $items['node/%node/edit-locked'] = array(
@@ -37,6 +34,7 @@ function node_limit_menu_alter(&$items) {
   //this is the menu item we want to effect.
   //alter the tab's title.
   $items['node/%node/edit']['title callback'] = 'node_limit_node_edit_title';
+  $items['node/%node/edit']['title'] = 'Update';
   $items['node/%node/edit']['title arguments'] = array(1);
   $items['node/%node/edit']['weight'] = -1;
   //go get the access
@@ -48,29 +46,48 @@ function node_limit_menu_alter(&$items) {
 function node_limit_node_edit_title($node) {
   $time_diff = REQUEST_TIME - $node->changed;
   $time_left = ceil(((15 * 60) - $time_diff)/60);
-  
-  if (user_access('always edit node')) {
-    return t('Update at any time!');
-  } else {
-    return t('Update (@time minutes left)', array('@time' => $time_left));
-  }
+  //  return t('Update at any time!');
+  //} else {
+    //return t('Update (@time minutes left)', array('@time' => $time_left));
+    return t("BLERG");
+  //}
 }
 
 //access callback for hook_menu_alter access
 function node_limit_node_edit_access($node) {
   //allow the user to update the node
   //if they have the right permission.
-  if ($node->changed > (REQUEST_TIME - 15 * 60)|| user_access('always edit node')) {
+  //this is a huge hack, I can't figure
+  //out how to not give the role to the administrators, so block them!
+  $admin_user = 0;
+  global $user;
+  if (in_array('administrator', $user->roles)) {
+   $admin_user = 1;
+  }
+  if (user_access('always edit node') && !$admin_user) {
+    echo 'you have the permission, way to go bob.';
+  }
+  //***DELETE TO HERE**//
+  if ($node->changed > (REQUEST_TIME - 15 * 60) || (user_access('always edit node') && !$admin_user)) {
+    echo "returning for you, bob";
     return node_access('update', $node);
   }
-  return false;
+  echo "not returning for whoever you are.";
+  return FALSE;
 }
 
 //access calllback for hook_menu access callback
 function node_limit_node_locked_access($node) {
-  if ($node->changed > (REQUEST_TIME - 15 * 60) || user_access('always edit node')) {
+  $admin_user = 0;
+  global $user;
+  if (in_array('administrator', $user->roles)) {
+   $admin_user = 1;
+  }
+  if ($node->changed > (REQUEST_TIME - 15 * 60) || !(user_access('always edit node') && !$admin_user)) {
+    echo "this person did not drop through";
     return FALSE;
   }
+  echo "bob dropped thru";
   return node_access('update', $node);    
 }
 
